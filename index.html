@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Logic circuit editor & simulator</title>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" href="src/style.css"/>
+		<script defer type="text/javascript" src="src/utils.js"></script>
+		<script defer type="text/javascript" src="src/ui_elements.js"></script>
+		<script defer type="text/javascript" src="src/simulator.js"></script>
+		<script defer type="text/javascript" src="src/simulator_ui.js"></script>
+		<script defer type="text/javascript" src="src/main.js"></script>
+	</head>
+	<body>
+		<div id="appWrapper">
+			<div id="topbar">
+				<div id="controls">
+					<img src="icons/start.svg" id="startBtn" class="button" title="Start Simulation" alt="START" />
+					<img src="icons/stop.svg" id="stopBtn" class="button hidden" title="Stop Simulation" alt="STOP" />
+					<img src="icons/step.svg" id="stepBtn" class="button" title="Step Forward" alt="STEP" />
+					<img src="icons/pause.svg" id="pauseBtn" class="button hidden" title="Pause Simulation" alt="PAUSE" />
+					<img src="icons/continue.svg" id="continueBtn" class="button hidden" title="Continue Simulation" alt="CONTINUE" />
+				</div>
+				<div id="tools">
+					<img src="icons/add_element.png" class="button selected" title="Add Element" alt="ADD" data-toolname="add_element" />
+					<img src="icons/connect.png" class="button" title="Connect Elements" alt="CONNECT" data-toolname="connect" />
+					<img src="icons/edit.svg" class="button" title="Edit Element" alt="EDIT" data-toolname="edit" />
+					<img src="icons/delete.png" class="button" title="Delete Element" alt="DELETE" data-toolname="delete" />
+				</div>
+				<div id="actions">
+					<img src="icons/save.svg" class="button" id="saveToFileBtn" title="Save To File" alt="SAVE" />
+					<img src="icons/load.svg" class="button" id="loadFromFileBtn" title="Load From File" alt="LOAD" />
+					<img src="icons/new.svg" class="button" id="newProjectBtn" title="New Project" alt="NEW" />
+				</div>
+			</div>
+			<div id="contentWrapper">
+				<div id="panel">
+					<div id="elemSelector"></div>
+					<div id="settings">
+						<h2>Settings</h2>
+						<br/>
+						<label>Max. steps per second:</label>
+						<input type="number" id="tpsInput" min="0.1" step="0.1" value="10">
+						<br/>
+						<label>Align to grid:</label>
+						<div id="alignToGrid" class="toggle activated"></div>
+					</div>
+				</div>
+				<div id="canvasContainer">
+					<canvas id="canvas" width="0" height="0"></canvas>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
