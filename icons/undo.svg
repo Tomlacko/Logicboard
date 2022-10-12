@@ -1,0 +1,15 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="26" height="26" viewBox="0 0 26 26">
+	<path d="
+		M 10,9
+		L 10,3
+		h -0.5
+		L 1,11.5
+		L 9.5,20
+		h 0.5
+		L 10,14
+		C 17,14 21,14 25,23
+		L 25,15
+		C 25,13 21,9 16,9
+		Z
+	" fill="#000" />
+</svg>

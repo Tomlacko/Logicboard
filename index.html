@@ -3,52 +3,213 @@
 	<head>
 		<title>Logic circuit editor & simulator</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<link rel="stylesheet" type="text/css" href="src/style.css"/>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+		<script defer type="text/javascript" src="src/config.js"></script>
 		<script defer type="text/javascript" src="src/utils.js"></script>
 		<script defer type="text/javascript" src="src/ui_elements.js"></script>
+		<script defer type="text/javascript" src="src/logic_elements.js"></script>
 		<script defer type="text/javascript" src="src/simulator.js"></script>
 		<script defer type="text/javascript" src="src/simulator_ui.js"></script>
 		<script defer type="text/javascript" src="src/main.js"></script>
 	</head>
 	<body>
 		<div id="appWrapper">
+			<div id="infoOverlay" class="overlay hidden">
+				<img src="icons/close.svg" id="closeInfoBtn" class="overlayButton" title="Close" alt="CLOSE" />
+				<div class="overlayContent">
+					<h1>About this application:</h1>
+					<p>This is a logic circuit editor and simulator implemented in HTML5/ES6 and rendered using a 2D canvas.</p>
+					<p>The aim of this application is to provide a simple yet effective way of designing, simulating, demonstrating and experimenting with logic circuits in a very approachable way.</p>
+					<p>In this app, a logic circuit is represented as a simple directed graph, where each node (vertex) is one logic element, and every edge represents a connection going from a source element to a target element. Self-loops and parallel (duplicate) connections aren't allowed.<br>Input elements (namely switches and buttons) can only act as source elements, meaning connections can only lead out of them, not into them, while output elements (namely the light bulb and display tile) are the opposite - they only work as targets, meaning that connections can only lead into them, not out of them.<br>There is, however, no limit to how many connections can lead into/out of an element.<br>You can identify the direction of every connection based on its color gradient and width; connections start out wide and strongly colored at the source, and gradually fade and thin out towards the target.</p>
+					<p>Elements rendered as red are currently activated (powered), while gray ones are unpowered.<br>During simulation, every activated element will send out power over all outgoing connections to all of its target elements. Every element reacts differently upon receiving/losing power; the behavior depends on the type of the logic element. For example, an AND gate will only activate if it's receiving power from all of its inputs, while an OR gate will activate if it receives power from any of its inputs.</p>
+					<p>Elements can be placed, moved, edited, connected, deleted, replaced and selected only while the simulation isn't running, which is referred to as "edit mode". During edit mode, elements can't be triggered and they don't send out power. Meanwhile in simulation mode, the exact opposite is true. In there, elements send power over outgoing connections and input elements can be clicked on, but no modification to the structure of the circuit can be made. Stopping the simulation and going back to edit mode will reset the circuit back to its initial state again.</p>
+					
+					<h2>Interface & functionality:</h2>
+					<ul>
+						<li>
+							<h3>Top bar:</h3>
+							<ul>
+								<li>
+									<h4>Simulation controls (top left corner):</h4>
+									<ul>
+										<li><b>Start/Stop</b> - Switches between simulation mode and edit mode. Stopping the simulation will reset it.</li>
+										<li><b>Pause/Continue</b> - Pauses/resumes the simulation without resetting it.</li>
+										<li><b>Step</b> - Allows for manually stepping the simulation step by step.</li>
+										<li><b>Step counter</b> - While simulating, displays the current step number/count.</li>
+									</ul>
+								</li>
+								<li>
+									<h4>Tools (top middle):</h4>
+									<ul>
+										<li><b>Add Element</b> - Allows elements to be placed when clicking on the canvas, depending on which element on the sidebar is selected.</li>
+										<li><b>Connect Elements</b> - Allows elements to be connected with a power line. Clicking on the first (source) element starts the connection, then clicking on the second (target/destination) element creates/places the connection between these two elements going in the given direction.<br>Clicking on an empty spot cancels the connection creation.<br>Clicking on an existing connection will pick it back up and allows it to be rewired elsewhere. Holding the left CTRL key allows for multiple connections to be clicked and rewired simultaneously.<br>Additionally, holding the left CTRL key keeps the connection creation active even after placing one, allowing for multiple target elements to be more easily connected to the source ones.<br>When a selection of multiple elements is clicked, connections are started from all the selected elements at once. The same applies for when the secondary click lands on an selected element; this will wire all held connections to every selected element.</li>
+										<li><b>Edit</b> - Clicking on an element with this tool will edit it. The exact way an element can be edited depends on each element, however, most elements support their initial power state being edited, which defines what state will the element be in at the beginning of a simulation.<br>Clicking on a connection will also allow you to connect it elsewhere (same rules as for the Connect Elements tool apply here too).<br>When clicking on a selection of multiple elements, all the elements of the same type will be edited at once.</li>
+										<li><b>Delete</b> - Clicking on an element or selection of elements will delete it.<br>Clicking on a connection will also delete that connection.</li>
+										<li><b>Replace</b> - Clicking on an element will replace it based on the element selected in the sidebar, creating a new element in the old element's place with the same connections if possible. If multiple elements are selected, all will be replaced.<br>If a connection is clicked instead, the new element will be placed on the connection, rewiring the connection through itself (acting as a middleman).<br>Lastly, if an element (or a selection of elements) is clicked while the element of the same type is selected, the element(s) will get replaced by a connection instead, connecting all of its inputs with all of its outputs, before deleting itself. If no such connection is possible, nothing will happen.</li>
+										<li><b>Select Elements</b> - With this tool selected, you can create a selection of multiple elements by clicking and dragging a selection area over the elements, or by clicking on each element individually.<br>Clicking on an empty spot will cancel the current selection and switch back to the previously used tool. The same will happen while starting a new selection, unless the left CTRL key is being held, in which case any new selection will get added to the existing one, and the tool will never be switched. Additionally, clicking an element with the left CTRL key held will toggle it between selected and unselected.</li>
+									</ul>
+								</li>
+								<li>
+									<h4>Actions & other buttons (top right corner):</h4>
+									<ul>
+										<li><b>Undo/Redo</b> - Reverts/redoes changes that have been made, one by one.</li>
+										<li><b>New Project</b> - Deletes everything from the canvas and resets everything to initial values. Revertable via undo.</li>
+										<li><b>Save To File</b> - Opens a save file dialog, allowing the project to be saved to a file locally and reopened later. The file format is JSON.</li>
+										<li><b>Load From File</b> - Opens a open file dialog, which allows any previously saved file to be opened and loaded again.</li>
+										<li><b>Show Info</b> - Opens this overlay with info and explanations.</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<h3>Left sidebar:</h3>
+							<ul>
+								<li>
+									<h4>Element selector:</h4>
+									<ul>
+										<li><b>Input button</b> - Buttons serve as inputs to the running circuit. Clicking a button during simulation will keep it powered on for as long as the mouse is being held down.<br>Connections cannot lead into this element, they can only lead out.<br>Editing this element will toggle if it should start already powered or not.</li>
+										<li><b>Input switch</b> - Switches serve as inputs to the running circuit. Clicking a switch during simulation will toggle it between being powered and unpowered.<br>Otherwise they work the same as buttons.</li>
+										<li><b>Output light bulb</b> - Light bulbs serve as visual outputs of the circuit. The light bulb will be turned on as long as it receives power from any of its incoming connections.<br>Connections cannot be created from this element, they can only lead into it.<br>Editing this element will toggle if it should start already powered or not.</li>
+										<li><b>Output display tile</b> - Display tiles serve as visual outputs of the circuit, especially for creating multi-element displays by placing them next to each other.<br>They work the same way as light bulb elements.</li>
+										<li><b>OR Gate</b> - Powered when receiving power from 1 or more incoming connections, otherwise unpowered.<br>Editing this element will toggle if it should start already powered or not.</li>
+										<li><b>NOT Gate</b> - Powered, unless receiving power from 1 or more incoming connections, otherwise powered.<br>Editing this element will toggle if it should start already unpowered or not.</li>
+										<li><b>AND Gate</b> - Powered when receiving power from all incoming connections at once, otherwise unpowered.<br>Editing this element will toggle if it should start already powered or not.</li>
+										<li><b>NAND Gate</b> - Powered, unless receiving power from all incoming connections at once.<br>Editing this element will toggle if it should start already unpowered or not.</li>
+										<li><b>XOR Gate</b> - Powered if receiving power from an odd number of incoming connections, otherwise unpowered.<br>Editing this element will toggle if it should start already powered or not.</li>
+										<li><b>XNOR Gate</b> - Powered, unless receiving power from an odd number of incoming connections. In other words, powered when receiving power from an even number of incoming connections.<br>Editing this element will toggle if it should start already unpowered or not.</li>
+										<li><b>Monostable circuit</b> - Monostable circuits stay in an unpowered state until a change in incoming power is detected, upon which they produce a single pulse of power and return back to the unpowered state, producing no more output until triggered again.<br>The exact behavior depends on the type of the element, which can be cycled through by editing it.<br>Rising-edge is the default setting (visualized with an extra line at the bottom), in which a pulse is created whenever the element receives any power for the first time. Power must stop being received until another pulse can be created.<br>Falling-edge is the second setting (visualized with an extra line at the top). In this setting, a pulse is created every time power stops being received.<br>Dual-edge is the final setting (visualized with extra lines on top and bottom). In this setting, a pulse is created both on receiving power and losing power.<br>The most common usage is using a rising-edge monostable circuit for pulse shortening.</li>
+										<li><b>Delay</b> - When any power is received, a countdown is started. The element stays unpowered until 1 is reached, upon which the countdown is reset, the element gets powered on, and stays powered as long as it's receiving some power. When power stops being received, the countdown starts counting down to 1 again. If power is resumed during this, the countdown gets immediately reset again, otherwise if 1 is reached, the element gets unpowered.<br>The length of the countdown (=delay) has to be specified when placing down the element, but it can also be edited later.<br>The minimum delay is 1, in which case the element will act exactly like an OR gate, because every element takes at least 1 step to update.</li>
+										<li><b>Toggle Flip-Flop</b> - This element acts as a switch toggleable by receiving power. When any power is received, the power state of this element will get toggled to the opposite state of what it's currently in. Before the element can be toggled again, it must first stop receiving power for any new pulse to be detectable.<br>Editing this element will toggle if it should start already powered or not.</li>
+										<li><b>Clock Pulser</b> - The clock element will start as unpowered, and will automatically count down. Upon reaching 0, a single pulse of power will be produced. In the next step, the element will get unpowered and the countdown will reset back to its initial value, and begin counting down again.<br>If any power gets received at any point, the clock will immediately reset to the initial value and freeze there, staying unpowered until power stops being received.<br>The length of the countdown (=delay) has to be specified when placing down the element, but it can also be edited later.<br>The minimum delay is 0, in which case the element will act exactly like a NOT gate, because the clock will be constantly powered on, unless receiving power.</li>
+										<li><b>Randomizer</b> - If this element receives any power, it has a 50% chance of getting powered. Whether it chooses to be powered or not, it will stay in the chosen state until it stops receiving power again, upon which it will return to its initial state.<br>This element cannot be edited.</li>
+										<li><b>Label</b> - Allows for text to be placed onto the canvas, which is useful for labeling parts of the circuit (such as inputs, etc.).<br>The displayed text has to be specified when placing down the element, but it can also be edited later.<br>As it exists purely for visual purposes, it cannot interact with the circuit in any way.</li>
+									</ul>
+								</li>
+								<li>
+									<h4>Settings:</h4>
+									<ul>
+										<li><b>Max. steps per second</b> - This sets how many simulation steps should be performed every second. Note, however, that due to performance reasons, the simulator might not always be able to reach this desired amount.</li>
+										<li><b>Align to grid</b> - When this toggle is enabled, the position of all newly placed/dragged elements will be aligned to the grid (specifically, to every half-step of the grid).</li>
+										<li><b>Show I/O only:</b> - When this toggle is enabled, then during simulation, only input and output elements are drawn (and also labels) to drastically improve simulation performance by skipping everything else. This is most useful when working with a big circuit, where speed is key and the reaction of outputs to inputs is what matters the most.</li>
+										<li><b>Show debug info</b> - Displays the values of many important variables and shows other interesting values. Additionally, debug info gets drawn under every element on the canvas.</li>
+									</ul>
+								</li>
+							</ul>
+							<h3>The canvas & input methods</h3>
+							<ul>
+								<li>
+									<h4>Mouse controls:</h4>
+									<ul>
+										<li><b>Panning</b> - Clicking and dragging on any empty spot on the canvas will move the canvas along with the mouse.</li>
+										<li><b>Element dragging</b> - Clicking and dragging on any element will move it along with the mouse.</li>
+										<li><b>Edge autopanning</b> - While dragging an element or creating a selection, moving the mouse close to the edge of the canvas will automatically start moving the canvas in the same direction.</li>
+										<li><b>Zooming</b> - Scrolling with the mouse scroll wheel will zoom in/out on the spot the mouse is currently at.</li>
+										<li><b>Save as image</b> - While this isn't functionality specific to this app, it's worth mentioning that right clicking on the canvas allows for saving its contents as an image.</li>
+									</ul>
+								</li>
+								<li>
+									<h4>Touch controls:</h4>
+									<ul>
+										<li><b>Warning!</b> - Unfortunately, touch controls aren't fully supported. They do, however, work on a basic level by mimicking mouse controls.</li>
+										<li><b>Zooming</b> - Touching with 2 or more fingers and moving up and down will zoom the canvas in and out respectively.</li>
+										<li><b>Copying and pasting</b> - This feature is unfortunately inaccessible from touch controls, as it requires keyboard shortcuts.</li>
+									</ul>
+								</li>
+								<li>
+									<h4>Keyboard controls, hotkeys and shortcuts:</h4>
+									<ul>
+										<li><b>Space</b> - Toggles between edit and simulation mode. In other words, starts/stops the simulation.</li>
+										<li><b>Escape</b> - Closes this info overlay, otherwise cancels any current action, be it connection creation, element dragging, panning, selecting or clicking.<br>If none of those actions are currently being performed, then this key can also stop the simulation if it's running, switch back to the previous tool if the selection tool is currently selected, and lastly, deselects any selected elements, all in this particular priority order.</li>
+										<li><b>P</b> - Pauses/unpauses the simulation (assuming it is already running).</li>
+										<li><b>. (&gt;)</b> - Manually steps the simulation forward by 1 step.</li>
+										<li><b>Arrow keys:</b> - Pressing the arrow keys will move (pan) the canvas in the given direction.</li>
+										<li><b>~ (Grave)</b> - Toggles debug info between shown/hidden.</li>
+										<li><b>G</b> - Toggles aligning to grid between active/disabled.</li>
+										<li><b>Z</b> - Undo (undoes the latest action).</li>
+										<li><b>Y</b> - Redo (redoes the latest action).</li>
+										<li><b>A</b> - Selects all elements in the simulator.</li>
+										<li><b>I</b> - Inverts the current element selection. All elements that have been selected before will stop being selected, and vice versa.</li>
+										<li><b>C</b> - Copies all selected elements onto a fake clipboard (not the actual clipboard, since that requires special permissions for pasting).</li>
+										<li><b>X</b> - Cuts all selected elements, saving them onto a fake clipboard, and deleting the existing selected elements.</li>
+										<li><b>V</b> - Pastes all the elements stored on the fake clipboard under the current mouse position and selects them.</li>
+										<li><b>Delete</b> - Deletes the currently selected elements.</li>
+										<li><b>Q</b> - Selects the "Add Element" tool.</li>
+										<li><b>W</b> - Selects the "Connect Elements" tool.</li>
+										<li><b>E</b> - Selects the "Edit" tool.</li>
+										<li><b>D</b> - Selects the "Delete" tool.</li>
+										<li><b>R</b> - Selects the "Replace" tool.</li>
+										<li><b>S</b> - Selects the "Select Elements" tool.</li>
+										<li><b>Left CTRL</b> - All the hotkeys work without CTRL being held. The key does, however, modify the functionality of certain actions, specifically connection creation and selection creation, which is described in their respective sections.</li>
+									</ul>
+								</li>
+								<li>
+									<h4>Drag & Drop:</h4>
+									<ul>
+										<li>Dragging and dropping a file over the canvas will automatically load it.</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
 			<div id="topbar">
 				<div id="controls">
 					<img src="icons/start.svg" id="startBtn" class="button" title="Start Simulation" alt="START" />
 					<img src="icons/stop.svg" id="stopBtn" class="button hidden" title="Stop Simulation" alt="STOP" />
-					<img src="icons/step.svg" id="stepBtn" class="button" title="Step Forward" alt="STEP" />
+					<img src="icons/step.svg" id="stepBtn" class="button" title="Single Step Forward" alt="STEP" />
 					<img src="icons/pause.svg" id="pauseBtn" class="button hidden" title="Pause Simulation" alt="PAUSE" />
 					<img src="icons/continue.svg" id="continueBtn" class="button hidden" title="Continue Simulation" alt="CONTINUE" />
+					<label id="stepCounter" class="hidden">0</label>
 				</div>
 				<div id="tools">
-					<img src="icons/add_element.png" class="button selected" title="Add Element" alt="ADD" data-toolname="add_element" />
-					<img src="icons/connect.png" class="button" title="Connect Elements" alt="CONNECT" data-toolname="connect" />
-					<img src="icons/edit.svg" class="button" title="Edit Element" alt="EDIT" data-toolname="edit" />
-					<img src="icons/delete.png" class="button" title="Delete Element" alt="DELETE" data-toolname="delete" />
+					<img src="icons/add_element.svg" class="button selected" title="Add Element" alt="ADD" data-toolname="add_element" />
+					<img src="icons/connect.svg" class="button" title="Connect Elements" alt="CONNECT" data-toolname="connect" />
+					<img src="icons/edit.svg" class="button" title="Edit" alt="EDIT" data-toolname="edit" />
+					<img src="icons/delete.svg" class="button" title="Delete" alt="DELETE" data-toolname="delete" />
+					<img src="icons/replace.svg" class="button" title="Replace" alt="REPLACE" data-toolname="replace" />
+					<img src="icons/select.svg" class="button" title="Select Elements" alt="SELECT" data-toolname="select" />
 				</div>
 				<div id="actions">
+					<img src="icons/undo.svg" class="button disabled" id="undoBtn" title="Undo" alt="UNDO" />
+					<img src="icons/redo.svg" class="button disabled" id="redoBtn" title="Redo" alt="REDO" />
+					<img src="icons/new.svg" class="button" id="newProjectBtn" title="New Project" alt="NEW" />
 					<img src="icons/save.svg" class="button" id="saveToFileBtn" title="Save To File" alt="SAVE" />
 					<img src="icons/load.svg" class="button" id="loadFromFileBtn" title="Load From File" alt="LOAD" />
-					<img src="icons/new.svg" class="button" id="newProjectBtn" title="New Project" alt="NEW" />
+					<img src="icons/info.svg" class="button" id="showInfoBtn" title="Show Info" alt="INFO" />
 				</div>
 			</div>
 			<div id="contentWrapper">
 				<div id="panel">
-					<div id="elemSelector"></div>
+					<div id="elemSelector">
+						<!--element images will get auto-generated here-->
+					</div>
 					<div id="settings">
-						<h2>Settings</h2>
-						<br/>
-						<label>Max. steps per second:</label>
-						<input type="number" id="tpsInput" min="0.1" step="0.1" value="10">
-						<br/>
-						<label>Align to grid:</label>
-						<div id="alignToGrid" class="toggle activated"></div>
+						<h4>Settings:</h4>
+						<div>
+							<label>Max. steps per second:</label>
+							<input type="number" id="tpsInput" min="0" step="1" value="10">
+						</div>
+						<div title="If enabled, every placed/dragged object will be aligned to the grid.">
+							<label>Align to grid:</label>
+							<div id="alignToGrid" class="toggle activated"></div>
+						</div>
+						<div title="If enabled, then while the simulation is running, everything except input and output elements (and labels) will be hidden to drastically increase performance.">
+							<label>Show I/O only:</label>
+							<div id="showIOonly" class="toggle"></div>
+						</div>
+						<div title="If enabled, displays extra info in the corner of the canvas as well as next to each element.">
+							<label>Show debug info:</label>
+							<div id="showDebug" class="toggle"></div>
+						</div>
 					</div>
 				</div>
 				<div id="canvasContainer">
 					<canvas id="canvas" width="0" height="0"></canvas>
+					<p id="debugInfo" class="hidden">Debug info</p>
 				</div>
 			</div>
+			<p id="footer" class="hidden"></p>
 		</div>
 	</body>
 </html>

@@ -1,0 +1,343 @@
+* {
+	font-family:Roboto, Sans-serif;
+	margin:0px;
+}
+
+html, body {
+	width:100%;
+	height:100%;
+	overflow:hidden;
+}
+
+html, body, div {
+	padding:0px;
+	font-size:0px;
+}
+
+body {
+	background-color:#999;
+	font-size:0px;
+}
+
+p, li {
+	font-size:14px;
+}
+h1 {
+	font-size:36px;
+	text-decoration:underline;
+}
+h2 {
+	font-size:28px;
+}
+h3 {
+	font-size:22px;
+}
+h4 {
+	font-size:18px;
+}
+
+label, input[type=number] {
+	font-size:13px;
+}
+
+.button, input[type=button] {
+	cursor:pointer;
+}
+
+.hidden {
+	display:none !important;
+}
+
+.disabled {
+	opacity:0.2;
+	cursor:default !important;
+}
+
+.overlay {
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+	background-color:rgba(0,0,0,0.7);
+	z-index:1000;
+	padding-top:50px;
+	box-sizing:border-box;
+	text-align:center;
+}
+
+.overlayButton {
+	margin:5px;
+	padding:10px;
+	cursor:pointer;
+	border-radius:15px;
+	background-color:rgba(120,120,120,0.8);
+	transition: background 0.2s;
+	position:absolute;
+	top:15px;
+	right:15px;
+}
+.overlayButton:hover {
+	background-color:#AAA;
+}
+
+.overlayContent {
+	text-align:left;
+	display:inline-block;
+	max-width:1000px;
+	height:100%;
+	padding:20px;
+	color:white;
+	box-sizing:border-box;
+	overflow:auto;
+	text-shadow:0px 0px 6px rgba(0,0,0,0.7);
+}
+.overlayContent h1 {
+	margin-bottom:30px;
+}
+.overlayContent h2 {
+	margin-top:20px;
+}
+.overlayContent p, .overlayContent li {
+	margin-top:10px;
+	font-size:16px;
+}
+.overlayContent > ul {
+	margin-top:10px;
+}
+.overlayContent ul {
+	margin-bottom:10px;
+}
+
+#appWrapper {
+	display:flex;
+	min-height:0;
+	flex-direction:column;
+	height:100%;
+	position:relative;
+}
+
+#topbar {
+	background-color:#CCC;
+	width:100%;
+	height:30px;
+	z-index:100;
+	text-align:center;
+	position:relative;
+	border-bottom:2px solid #000;
+	user-select:none;
+}
+#topbar .button {
+	transition:background 0.2s;
+    border-radius:2px;
+	margin:2px;
+	vertical-align:middle;
+}
+#topbar .button:not(.disabled):hover {
+	background-color:#BBB;
+}
+#topbar .button.selected {
+	background-color:#A4A4A4 !important;
+}
+#controls {
+	display:inline-block;
+	position:absolute;
+	top:0px;
+	left:0px;
+}
+#tools {
+	display:inline-block;
+}
+#actions {
+	display:inline-block;
+	position:absolute;
+	top:0px;
+	right:0px;
+}
+#stepCounter {
+	font-size:20px;
+	font-weight: bold;
+	vertical-align:middle;
+	margin-left:5px;
+}
+
+#contentWrapper {
+	display:table;
+	width:100%;
+	height:calc(100% - 32px);
+	user-select:none;
+}
+
+#panel {
+	display:table-cell;
+	background-color:#333;
+	height:100%;
+	width:160px;
+	border-right:2px solid #000;
+	z-index:50;
+	position:relative;
+}
+#elemSelector {
+	display:block;
+    text-align:center;
+	overflow-x:hidden;
+	padding-top:10px;
+	padding-bottom:10px;
+	position:absolute;
+	top:0px;
+	box-sizing:border-box;
+	height:calc(100% - 150px);
+	width:100%;
+	box-shadow:inset 0px 0px 10px rgba(0, 0, 0, 0.7);
+}
+#elemSelector > img {
+	padding:5px;
+	margin:auto;
+	transition:background 0.15s;
+	cursor:pointer;
+}
+#elemSelector > img::after {
+	content: "<br>";
+	white-space: pre;
+}
+#elemSelector > img:not(.disabled):hover {
+	background-color:#8AF;
+}
+#elemSelector > img.selected {
+	background-color:#5280F5 !important;
+}
+
+#settings {
+	display:block;
+	box-sizing:border-box;
+	height:150px;
+	width:100%;
+	position:absolute;
+	bottom:0px;
+	border-top:2px solid #000;
+	background-color:#444;
+	color:white;
+	vertical-align:middle;
+	padding:4px;
+	/*overflow:auto;*/
+	overflow:hidden;
+}
+#settings > * {
+	clear:both;
+}
+#settings *:not(div) {
+	display:inline-block;
+}
+#settings h4, #settings label {
+	text-shadow:1px 1px 3px #222;
+	float:left;
+}
+#settings h4 {
+	text-decoration:underline;
+}
+#settings label {
+	margin-top:5px;
+	vertical-align:middle;
+}
+#settings input[type=number] {
+	max-width:90%;
+}
+#settings .toggle {
+	float:right;
+}
+
+#canvasContainer {
+	display:table-cell;
+	width:auto;
+	height:100%;
+	position:relative;
+}
+#canvasContainer::after {
+    box-shadow:inset 0px 0px 10px rgba(0, 0, 0, 0.7);
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100%;
+    content:"";
+	pointer-events:none;
+}
+#canvas {
+	background-color:#FFF;
+	position:absolute;
+	top:0px;
+	left:0px;
+}
+
+#debugInfo {
+	pointer-events:none;
+	position:absolute;
+	top:10px;
+	left:10px;
+	font-size:12px;
+	color:#000;
+	text-shadow:-1px -1px 1px #FFF, -1px 1px 1px #FFF, 1px -1px 1px #FFF, 1px 1px 1px #FFF;
+	z-index:9;
+	opacity:1;
+	transition:opacity 0.2s;
+	display:inline-block !important;
+}
+#debugInfo.hidden {
+	opacity:0; /*all this is needed instead of truly hiding the element, because there is some weird subpixel rendering bug caused by this element's presence somewhere else on the page*/
+}
+
+#footer {
+	pointer-events:none;
+	position:absolute;
+	bottom:10px;
+	right:10px;
+	font-size:12px;
+	color:#222;
+	z-index:10;
+	text-align:right;
+}
+
+.toggle {
+	display:inline-block;
+	border:2px solid #BBB;
+	background-color:#CCC;
+	width:30px;
+	height:15px;
+	border-radius:50px;
+	text-align:left;
+	cursor:pointer;
+	transition:background 0.2s;
+	vertical-align:middle;
+	margin:4px;
+}
+
+.toggle.activated {
+	background-color:#1186E3;
+	border:2px solid #1990EB;
+}
+
+.toggle::after {
+	display:inline-block;
+	background-color:#FFF;
+	border-radius:50px;
+	width:15px;
+	height:15px;
+	pointer-events:none;
+	transition:margin-left 0.2s;
+	transition-timing-function:ease-out;
+	content:"";
+}
+
+.toggle.activated::after {
+	margin-left:15px;
+}
+
+#canvas.cursor_panning {
+	cursor:move;
+}
+#canvas.cursor_grabbing {
+	cursor:grabbing;
+}
+#canvas.cursor_selecting {
+	cursor:crosshair;
+}
