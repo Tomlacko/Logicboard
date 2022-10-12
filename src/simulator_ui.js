@@ -738,7 +738,7 @@ class SimulatorUI {
 	}
 	
 	//directly sets the mouse position without updating anything else
-	_SetMousePosition(rawX, rawY, updateDebug) {
+	_SetMousePosition(rawX, rawY) {
 		//last mouse position, copy by value
 		this.lastMousePos.raw.x = this.mousePos.raw.x;
 		this.lastMousePos.raw.y = this.mousePos.raw.y;
@@ -749,8 +749,6 @@ class SimulatorUI {
 		this.mousePos.raw.x = rawX;
 		this.mousePos.raw.y = rawY;
 		this.mousePos.real = this.RawCoordsToReal(this.mousePos.raw);
-		
-		if(updateDebug) this.UpdateDebugInfo();
 	}
 	
 	//updates the position of the mouse and everything it's holding whether the mouse moves or the canvas itself moves
@@ -761,7 +759,7 @@ class SimulatorUI {
 		
 		//if the mouse is being held down, then recognize when it moves away from its initial spot (this enables panning/dragging/selecting and prevents a full mouse click)
 		//(this code block is triggered only the first time the mouse starts moving)
-		if(this.mouseDownPos && !this.mouseMovingWhilePressed && UTILS.Distance(this.mouseDownPos.raw, this.mousePos.raw) > CONFIG.mouseMoveToleranceOnClick) {
+		if(this.mouseDownPos && !this.mouseMovingWhilePressed && UTILS.Distance(this.mouseDownPos.raw, this.mousePos.raw)*window.devicePixelRatio > CONFIG.mouseMoveToleranceOnClick) {
 			this.mouseMovingWhilePressed = true;
 			
 			//if making a selection, then disregard any clicked elements
